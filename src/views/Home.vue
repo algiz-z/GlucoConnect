@@ -13,7 +13,6 @@
 // @は/srcと同じ意味です
 // import something from '@/components/something.vue';
 // import { baseUrl } from '@/assets/config.js';
-
 // const headers = {'Authorization' : 'mtiToken'};
 
 export default {
@@ -47,6 +46,7 @@ export default {
   created: async function() {
     // Vue.jsの読み込みが完了したときに実行する処理はここに記述する
     // apiからarticleを取得する
+    this.$router.push({name:'Login'})
   },
 
   methods: {
