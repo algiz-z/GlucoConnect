@@ -8,8 +8,11 @@
   <div class="ui segment">
     <form class="ui form">
       <div class="field">
-        <label for="name">患者名：</label>
-        <input v-model="name" type="text" name="name" placeholder="患者名" class="ui huge fluid input" />
+        <label for="username">患者名：</label>
+        <button type="button" class="ui inverted green circular button right floated compact" @click="resetForm()">
+          リセット
+        </button>
+        <input v-model="username" type="text" name="username" placeholder="患者名" class="ui huge fluid input" />
       </div>
   
       <div class="field">
@@ -44,7 +47,7 @@
     <ul class="ui centered grid">
       <template v-for="(patient, index) in filteredUsers" :key="index">
         <li class="ui row">
-          <router-link :to="`/patient-detail?patientId=${patient.id}`">
+          <router-link :to="`/patient-detail?patientId=${patient.user_id}&username=${patient.username}`">
             <div class="ui card custom-card-width">
               <div class="content">
                 <div class="ui three column grid">
@@ -52,10 +55,10 @@
                     <img :src="patient.profilePicture || 'https://semantic-ui.com/images/wireframe/square-image.png'" @error="onImageError" class="ui image-size image circular" alt="Profile Picture" />
                   </div>
                   <div class="column eight wide left aligned vertical middle aligned">
-                    <h3 class="ui name-text">{{ patient.name }}</h3>
+                    <h3 class="ui name-text">{{ patient.username }}</h3>
                   </div>
                   <div class="column five wide right aligned vertical middle aligned">
-                    <div class="ui green label large">HbA1c: {{ patient.hba1c }}%</div>
+                    <div class="ui green label large">HbA1c: {{ patient.hba1c_value }}%</div>
                   </div>
                 </div>
               </div>
@@ -78,22 +81,22 @@ export default {
 
   data() {
     return {
-      desc: true,
-      name: "",
+      desc: false,
+      username: "",
       start: 0,
       end: 10,
       patients: [
         {
-          id: 1,
-          name: 'Mie Takaoka',
+          user_id: 1,
+          username: 'Mie Takaoka',
           profilePicture: '',
-          hba1c: 5.6,
+          hba1c_value: 5.6,
         },
         {
-          id: 2,
-          name: 'Mariana Okazaki',
+          user_id: 2,
+          username: 'Mariana Okazaki',
           profilePicture: 'path_to_image2.jpg',
-          hba1c: 7.1,
+          hba1c_value: 7.1,
         },
       ],
     };
@@ -102,11 +105,11 @@ export default {
   computed: {
     filteredUsers() {
       return this.patients.filter(e => {
-        const matchName = this.name ? e.name?.match(this.name) : true;
+        const matchUsername = this.username ? e.username?.match(this.username) : true;
         const withinHb = (
-          (this.start ? e.hba1c >= this.start : true) &&(this.end ? e.hba1c <= this.end : true)
+          (this.start ? e.hba1c_value >= this.start : true) &&(this.end ? e.hba1c_value <= this.end : true)
         ); 
-        return matchName && withinHb;
+        return matchUsername && withinHb;
       });
     }
   },
@@ -140,20 +143,31 @@ export default {
         // エラー時の処理
       }
     },
-  toggleMode() {
-    this.desc = !this.desc;
-    this.patients.sort((a, b) => {
-      if (this.desc) {
-        return b.hba1c - a.hba1c;
-      } else {
-        return a.hba1c - b.hba1c;
-      }
-    });
-  },
+    toggleMode() {
+      this.desc = !this.desc;
+      this.patients.sort((a, b) => {
+        if (this.desc) {
+          return b.hba1c_value - a.hba1c_value;
+        } else {
+          return a.hba1c_value - b.hba1c_value;
+        }
+      });
+    },
+    
     onImageError(event) {
       event.target.src = 'https://semantic-ui.com/images/wireframe/square-image.png';
     },
+    
+    resetForm() {
+      this.username = "";
+      this.start = 0;
+      this.end = 10;
+    },
   },
+  
+  mounted() {
+    this.toggleMode();
+  }
 };
 </script>
 

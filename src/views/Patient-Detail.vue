@@ -1,8 +1,21 @@
 <template>
   <div class="ui main container">
-    <div class="ui green circular button" @click="goBack">
-      <i class="arrow left icon"></i>
+    
+    <div class="ui grid">
+      <div class="ui row">
+        <div class="column">
+          <div class="ui green circular button" @click="goBack">
+            <i class="arrow left icon"></i>
+          </div>
+        </div>
+        <div class="column">
+          <div class="ui huge label nowrap">
+            {{ username }}
+          </div>
+        </div>
+      </div>
     </div>
+    
     <div class="ui green pointing secondary compact menu right floated">
       <button class="ui button item" :class="{ active: mode === 1 }" @click="changeMode(1)">
         日常
@@ -20,6 +33,11 @@
     
     <div class="ui secondary menu right">
       <div class="right menu">
+        
+        <button class="ui inverted green button circular" @click="goToCurrentMonth" v-if="selectedMonth !== currentMonth">
+          今月
+        </button>
+        
         <button class="ui button item" @click="prevMonth">
           <i class="chevron left icon"></i>
         </button>
@@ -34,7 +52,7 @@
       </div>
     </div>
 
-    <div class="field padding-top" v-if="mode === 1 || mode===3">
+    <div class="field padding-top" v-if="mode !== 4">
       
       <table class="ui celled table">
         <thead>
@@ -52,25 +70,6 @@
         </tbody>
       </table>
       
-    </div>
-    
-    <div class="field" v-if="mode === 2">
-        
-      <table class="ui celled table">
-        <thead>
-          <tr>
-            <th v-for="day in daysOfWeek" :key="day" class="center aligned">{{ day }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(week, weekIndex) in calendar" :key="weekIndex">
-            <td v-for="day in week" :key="day.date">
-              <div class="calendar-day-number">{{ day.date }}</div>
-              <img v-if="day.date" :src="day.image" alt="" class="calendar-image" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
     
     <div class="field" v-if="mode === 4">
@@ -92,12 +91,21 @@ export default {
   data() {
     return {
       mode: 1, // 1: 日常  2: 食事  3: 運動  4: HbA1c
+      currentMonth: new Date().getMonth() + 1,
       selectedMonth: new Date().getMonth() + 1,
       selectedYear: new Date().getFullYear(), 
       days: Array.from({ length: 30 }, (_, index) => ({
         date: index + 1,
         image: `https://via.placeholder.com/100?text=Day+${index + 1}`
       })),
+      posts: [
+        {
+          user_id: 1,
+          created_at: '1724137171863',
+          profilePicture: '',
+          hba1c_value: 5.6,
+        },
+      ],
     };
   },
 
@@ -115,7 +123,10 @@ export default {
       }
 
       return weeks;
-    }
+    },
+    username() {
+      return this.$route.query.username;
+    },
   },
   
   methods: {
@@ -148,6 +159,11 @@ export default {
       } catch (e) {
         console.error(e);
       }
+    },
+
+    goToCurrentMonth() {
+      this.selectedMonth = this.currentMonth;
+      this.updateDays();
     },
 
     prevMonth() {
@@ -203,12 +219,6 @@ export default {
 .table {
   width: 100%;
   border-collapse: collapse;
-}
-
-.calendar-image {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
 }
 
 .ui.celled.table td {
