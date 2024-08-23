@@ -1,5 +1,5 @@
 <template>
-    <div class="container" style="border: 1px solid black; padding: 10px;">
+    <div class="container" style="border: 1px solid black;margin-top:50px; padding: 10px;">
         <div class="textarea-container">
             <div class="ui form">
                 <div class="field">
@@ -7,11 +7,11 @@
                 </div>
             </div>
         </div>
-        <div class="ui form" style="margin-top: 100px;">
-            <div class="ui grid">
+        <div class="ui form" style="margin-top: 100px;margin-left;50xpx;">
+            <div class="ui grid" style=" text-align: center;">
                  <div class="inline fields">
                     <div class="field">
-                        <div class="ui radio checkbox" style="margin-left: 20px;">
+                        <div class="ui radio checkbox" style="margin-left: 500px;">
                             <input type="radio" name="record" value="meal">
                             <label>食事記録</label>
                         </div>
@@ -20,7 +20,7 @@
                 </div>
                 <div class="inline fields">
                     <div class="field">
-                        <div class="ui radio checkbox　">
+                        <div class="ui radio checkbox">
                             <input type="radio" name="record" value="diagnosis">
                             <label>診察・日常記録</label>
                         </div>
@@ -30,12 +30,12 @@
             <div class="ui grid">
                 <div class="inline fields">
                     <div class="field">
-                        <div class="ui radio checkbox">
+                        <div class="ui radio checkbox" style="margin-left: 500px;margin-right:5px;">
                             <input type="radio" name="record" value="medicine">
                             <label>薬の相性</label>
                         </div>
                     </div>
-                    <select class="ui dropdown">
+                    <select class="ui dropdown" style="width: 60px;">
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -49,7 +49,7 @@
                     </select>
                 </div>
                 <div class="submit-btn">
-                    <button class="ui button" type="submit">投稿</button>
+                    <button class="ui button green" type="submit">投稿</button>
                 </div>
             </div>
         </div>
@@ -93,6 +93,10 @@ export default {
     .container{
         border: 1px solid black;
         padding: 10px;
+    }
+    label{
+        writing-mode: horizontal-tb;
+        display: inline-block;
     }
 </style>
   
