@@ -29,7 +29,7 @@
 | `username`      | `STRING`           | 医師のユーザー名                                                       |
 | `password`      | `STRING`           | ハッシュ化されたパスワード                                             |
 | `patient_map`   | `MAP`              | 担当患者の情報を保持するマップ。`patient_id`をキーとし、関連データを持つ |
-| `category`      | `STRING`           | 医師の専門分野（例: 内科、糖尿病専門医など）                            |
+| `category`      | `STRING`           | 医師の専門分野（例: 内科、糖尿病専門医など）  ソートキー              |
 
 ### Posts（投稿）テーブル
 
@@ -39,8 +39,8 @@
 | `created_at`        | `STRING`           | 投稿が作成された日時 (Sort Key)。タイムスタンプ形式が推奨されます      |
 | `post_type`         | `STRING`           | 投稿の種類（例: 診察記録、薬の相性記録、食事記録など）                |
 | `content`           | `STRING`           | 診察記録やメモなどの投稿内容                                         |
-| `drug_score`        | `NUMBER`           | 薬の相性値（`post_type`が薬の相性記録の場合に使用）                  |
-| `mealpicture_meta`  | `STRING`              | 食事記録画像のメタデータ。画像のURL（`post_type`が食事記録の場合に使用） |
+| `medicine_score`    | `NUMBER`           | 薬の相性値（`post_type`が薬の相性記録の場合に使用）                  |
+| `mealpicture`  | `STRING`              | 食事記録画像のメタデータ。画像のURL（`post_type`が食事記録の場合に使用） |
 
 ### Hba1c_Records（HbA1c記録）テーブル
 

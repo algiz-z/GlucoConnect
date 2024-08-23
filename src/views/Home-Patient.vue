@@ -1,5 +1,4 @@
 <template>
-
     <div class="container" style="border: 1px solid black; padding: 10px;">
         <div class="textarea-container">
             <div class="ui form">
@@ -21,7 +20,7 @@
                 </div>
                 <div class="inline fields">
                     <div class="field">
-                        <div class="ui radio checkbox" style="margin-left: 20px;">
+                        <div class="ui radio checkbox　">
                             <input type="radio" name="record" value="diagnosis">
                             <label>診察・日常記録</label>
                         </div>
@@ -55,21 +54,20 @@
             </div>
         </div>
     </div>
-    
 </template>
   
-  <script>
-  // 必要なものはここでインポートする
-  // @は/srcの同じ意味です
-  // import something from '@/components/something.vue';
-  
-  export default {
+<script>
+// 必要なものはここでインポートする
+// @は/srcの同じ意味です
+// import something from '@/components/something.vue';
+
+export default {
     name: 'Patient',
-  
+    
     components: {
       // 読み込んだコンポーネント名をここに記述する
     },
-  
+    
     data() {
       // Vue.jsで使う変数はここに記述する
       return {
@@ -80,18 +78,21 @@
        ],
       };
     },
-  
+    
     computed: {
       // 計算した結果を変数として利用したいときはここに記述する
     },
-  
+    
     methods: {
       // Vue.jsで使う関数はここで記述する
     },
-  }
-  </script>
+}
+</script>
   
-  <style scoped>
-  /* このコンポーネントだけに適用するCSSはここに記述する */
-  </style>
+<style scoped>
+    .container{
+        border: 1px solid black;
+        padding: 10px;
+    }
+</style>
   
