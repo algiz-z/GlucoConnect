@@ -20,7 +20,7 @@ TableName: GlucoConnectPatient
 | `user_id`       | `STRING`           | 患者を一意に識別するためのID (Partition Key)                          |
 | `username`      | `STRING`           | 患者のユーザー名                                                      |
 | `password`      | `STRING`           | ハッシュ化されたパスワード                                            |
-| `doctor_map`    | `MAP`              | 担当医師の情報を保持するマップ。`doctor_id`をキーとし、関連データを持つ |
+| `doctor_map`    | `MAP`              | 担当医師の情報。key:`GlucoConnectDoctor.user_id`, value:`GlucoConnectDoctor.username`|
 
 ### Doctor（医師）テーブル
 TableName: GlucoConnectDoctor
@@ -30,7 +30,7 @@ TableName: GlucoConnectDoctor
 | `user_id`       | `STRING`           | 医師を一意に識別するためのID (Partition Key)                           |
 | `username`      | `STRING`           | 医師のユーザー名                                                       |
 | `password`      | `STRING`           | ハッシュ化されたパスワード                                             |
-| `patient_map`   | `MAP`              | 担当患者の情報を保持するマップ。`patient_id`をキーとし、関連データを持つ |
+| `patient_map`   | `MAP`              | 担当患者の情報。key:`GlucoConnectPatient.user_id`, value:`GlucoConnectPatient.username`|
 | `category`      | `STRING`           | 医師の専門分野（例: 内科、糖尿病専門医など）  ソートキー              |
 
 ### Articles（投稿）テーブル

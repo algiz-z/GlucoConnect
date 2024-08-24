@@ -1,5 +1,10 @@
 <template>
     <div class="container" style="border: 1px solid black;margin-top:50px; padding: 10px;">
+        <!-- 選択されたラジオボタンのラベルを表示 -->
+        <div style="margin-bottom: 10px;">
+            <strong v-if="selectedRecord">選択中: {{ selectedRecord }}</strong>
+            <strong v-else>未選択</strong> <!-- 未選択時に表示 -->
+        </div>
         <div class="textarea-container">
             <div class="ui form">
                 <div class="field">
@@ -7,21 +12,24 @@
                 </div>
             </div>
         </div>
-        <div class="ui form" style="margin-top: 100px;margin-left;50xpx;">
-            <div class="ui grid" style=" text-align: center;">
+        <div class="ui form" style="margin-top: 100px;">
+            <div class="ui grid" style="text-align: center;">
                  <div class="inline fields">
                     <div class="field">
-                        <div class="ui radio checkbox" style="margin-left: 500px;">
-                            <input type="radio" name="record" value="meal">
+                        <div class="ui radio checkbox">
+                            <input type="radio" name="record" value="食事記録" v-model="selectedRecord">
                             <label>食事記録</label>
                         </div>
                     </div>
-                    <div class="reference">参照</div>
+                    <div class="field">
+                        <label class="ui button" for="file-upload">参照</label>
+                        <input type="file" id="file-upload" style="display: none;">
+                    </div>
                 </div>
                 <div class="inline fields">
                     <div class="field">
                         <div class="ui radio checkbox">
-                            <input type="radio" name="record" value="diagnosis">
+                            <input type="radio" name="record" value="診察・日常記録" v-model="selectedRecord">
                             <label>診察・日常記録</label>
                         </div>
                     </div>
@@ -30,8 +38,8 @@
             <div class="ui grid">
                 <div class="inline fields">
                     <div class="field">
-                        <div class="ui radio checkbox" style="margin-left: 500px;margin-right:5px;">
-                            <input type="radio" name="record" value="medicine">
+                        <div class="ui radio checkbox" style="margin-right:5px;">
+                            <input type="radio" name="record" value="薬の相性" v-model="selectedRecord">
                             <label>薬の相性</label>
                         </div>
                     </div>
@@ -55,48 +63,30 @@
         </div>
     </div>
 </template>
-  
-<script>
-// 必要なものはここでインポートする
-// @は/srcの同じ意味です
-// import something from '@/components/something.vue';
 
+<script>
 export default {
     name: 'Patient',
-    
-    components: {
-      // 読み込んだコンポーネント名をここに記述する
-    },
-    
     data() {
-      // Vue.jsで使う変数はここに記述する
-      return {
-       users:[
-        {username: '1',create_at: 1,content:'text'},
-        {username: '2',create_at: 2,content:'text'},
-        {username: '3',create_at: 3,content:'text'},
-       ],
-      };
-    },
-    
-    computed: {
-      // 計算した結果を変数として利用したいときはここに記述する
-    },
-    
-    methods: {
-      // Vue.jsで使う関数はここで記述する
+        return {
+            selectedRecord: '',  // 初期値を空に設定して未選択状態にする
+            users: [
+                {username: '1', create_at: 1, content: 'text'},
+                {username: '2', create_at: 2, conte　nt: 'text'},
+                {username: '3', create_at: 3, content: 'text'},
+            ],
+        };
     },
 }
 </script>
-  
+
 <style scoped>
-    .container{
+    .container {
         border: 1px solid black;
         padding: 10px;
     }
-    label{
+    label {
         writing-mode: horizontal-tb;
         display: inline-block;
     }
 </style>
-  

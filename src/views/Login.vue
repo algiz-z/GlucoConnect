@@ -12,19 +12,50 @@
       </div>
       
       <div class="ui segment">
-        <form class="ui large form" @submit.prevent="submit">
+        
+        <div class="ui green top attached tabular two item menu">
+            <button class="ui button item" :class="{ active: isPatient }" @click="changeUserType()">
+              患者
+            </button>
+            <button class="ui button item" :class="{ active: !isPatient }" @click="changeUserType()">
+              医師
+            </button>
+        </div>
+        
+        <form class="ui large form bottom attached segment" @submit.prevent="submit">
           
           <div class="field">
             <div class="ui left icon input">
-              <i class="user icon"></i>
-              <input type="text" placeholder="ID" v-model="user.userId">
+              <i class="id card icon"></i>
+              <input type="text" placeholder="User ID" v-model="user.user_id" />
             </div>
           </div>
           
           <div class="field">
             <div class="ui left icon input">
               <i class="lock icon"></i>
-              <input type="password" placeholder="Password" v-model="user.password">
+              <input type="password" placeholder="Password" v-model="user.password" />
+            </div>
+          </div>
+          
+          <div class="field" v-if="!isLogin">
+            <div class="ui left icon input">
+              <i class="user icon"></i>
+              <input type="text" placeholder="氏名" v-model="user.username" />
+            </div>
+          </div>
+          
+          <div class="field" v-if="!isLogin && isPatient">
+            <div class="ui left icon input">
+              <i class="tint icon"></i>
+              <input type="text" placeholder="HbA1cの値" v-model="user.hba1c_value" />
+            </div>
+          </div>
+          
+          <div class="field" v-if="!isLogin && !isPatient">
+            <div class="ui left icon input">
+              <i class="tag icon"></i>
+              <input type="text" placeholder="専門分野" v-model="user.category" />
             </div>
           </div>
           
@@ -59,9 +90,13 @@ export default {
     return {
       isLoading: false,
       isLogin: true,
+      isPatient: true,
       user: {
-        userId: null,
+        user_id: null,
         password: null,
+        username: null,
+        category: null,
+        hba1c_value: null,
       },
       message: null,
     };
@@ -70,16 +105,21 @@ export default {
   computed: {
     // 計算した結果を変数として利用したいときはここに記述する
     submitText() {
-      return this.isLogin ? 'ログイン' : '新規登録';
+      let text = this.isPatient ? '患者として' : '医師として';
+      text += this.isLogin ? 'ログイン' : '新規登録';
+      return text;
     },
     toggleText() {
       return this.isLogin ? '新規登録' : 'ログイン';
     },
     isFormValid() {
       if(this.isLogin) {
-        return this.user.userId && this.user.password;
+        return this.user.user_id && this.user.password;
       }
-      return this.user.userId && this.user.password;
+      if(this.isPatient) {
+        return this.user.user_id && this.user.password && this.user.username && this.user.hba1c_value;
+      }
+      return this.user.user_id && this.user.password && this.user.username && this.user.category;
     }
   },
 
@@ -88,6 +128,10 @@ export default {
     toggleMode() {
       this.isLogin = !this.isLogin
     },
+    changeUserType() {
+      this.isPatient = !this.isPatient
+    },
+    
     async submit(){
       if (this.isLoading) {
         return;
@@ -96,7 +140,7 @@ export default {
       if(this.isLogin) {
         //リクエストボディを指定する
         const requestBody = {
-          userId: this.user.userId,
+          user_id: this.user.user_id,
           password: this.user.password
         };
   
@@ -120,7 +164,8 @@ export default {
           // 成功時の処理
           console.log(jsonData);
           window.localStorage.setItem('token', jsonData.token);
-          window.localStorage.setItem('userId', this.user.userId);
+          window.localStorage.setItem('user_id', this.user.user_id);
+          window.localStorage.setItem('account_type', isPatient ? 'patient' : 'doctor');
           this.$router.push({ name : 'Home' });
           
         } catch (e) {
@@ -133,11 +178,27 @@ export default {
       }
       //新規登録
       // リクエストボディを指定する
-      const requestBody = {
-        userId: this.user.userId,
-        password: this.user.password,
-      };
+      let requestBody;
+      
+      if (this.isPatient) {
+        requestBody = {
+          account_type: "patient",
+          user_id: this.user.user_id,
+          password: this.user.password,
+          username: this.user.username,
+          hba1c_value: this.user.hba1c_value,
+        };
+      } else {
+        requestBody = {
+          account_type: "doctor",
+          user_id: this.user.user_id,
+          password: this.user.password,
+          username: this.user.username,
+          category: this.user.category,
+        };
+      }
 
+      
       try {
         /* global fetch */
         const res = await fetch(baseUrl + '/user/signup', {
@@ -158,7 +219,8 @@ export default {
         // 成功時の処理
         console.log(jsonData);
         window.localStorage.setItem('token', jsonData.token);
-        window.localStorage.setItem('userId', this.user.userId);
+        window.localStorage.setItem('user_id', this.user.user_id);
+        window.localStorage.setItem('account_type', isPatient ? 'patient' : 'doctor');
         this.$router.push({ name : 'Home' });
           
       } catch (e) {

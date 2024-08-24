@@ -5,44 +5,57 @@
       <div class="ui text loader">Loading</div>
     </div>
     
-  <div class="ui segment">
-    <form class="ui form">
-      <div class="field">
-        <label for="username">患者名：</label>
-        <button type="button" class="ui inverted green circular button right floated compact" @click="resetForm()">
-          リセット
-        </button>
-        <input v-model="username" type="text" name="username" placeholder="患者名" class="ui huge fluid input" />
-      </div>
-  
-      <div class="field">
-        <label>HbA1c：</label>
+    <div class="ui segment">
+      <form class="ui form">
         <div class="ui grid">
-          <div class="eight wide column">
-            <div class="ui fluid action input">
-              <input v-model.number="start" type="number" name="HbA1c-start" placeholder="%から" />
-              <div class="ui label">から</div>
+          <div class="row">    
+            <div class="one wide column center aligned vertical middle aligned">
+              <label>患者名：</label>
+            </div>
+            <div class="fourteen wide column">
+              <input v-model="username" type="text" name="username" placeholder="患者名" class="ui huge fluid input" />
             </div>
           </div>
-          <div class="eight wide column">
-            <div class="ui fluid action input">
-              <input v-model.number="end" type="number" name="HbA1c-end" placeholder="%まで" />
-              <div class="ui label">まで</div>
+    
+          <div class="row">
+            <div class="one wide column center aligned vertical middle aligned">
+              <label>HbA1c：</label>
+            </div>
+            <div class="seven wide column">
+              <div class="ui action input">
+                <input v-model.number="start" type="number" name="HbA1c-start" placeholder="%から" />
+                <span>から</span>
+              </div>
+            </div>
+            <div class="seven wide column">
+              <div class="ui action input">
+                <input v-model.number="end" type="number" name="HbA1c-end" placeholder="%まで" />
+                <div class="ui">まで</div>
+              </div>
             </div>
           </div>
+          
+          <div class="row">
+            <div class="one wide column"></div>
+            <div class="thirteen wide column">
+              <div class="ui green two item menu">
+                <button class="ui button item" :class="{ active: desc }" @click="toggleMode()">
+                  HbA1c 降順で並べ替え
+                </button>
+                <button class="ui button item" :class="{ active: !desc }" @click="toggleMode()">
+                  HbA1c 昇順で並べ替え
+                </button>
+              </div>
+            </div>
+            <div class="two wide column">
+              <button type="button" class="ui inverted green circular button" @click="resetForm()">
+                リセット
+              </button>
+            </div>
+          </div>
+              
         </div>
-      </div>
-    </form>
-  
-      <div class="ui green two item menu">
-        <button class="ui button item" :class="{ active: desc }" @click="toggleMode()">
-          HbA1c 降順で並べ替え
-        </button>
-        <button class="ui button item" :class="{ active: !desc }" @click="toggleMode()">
-          HbA1c 昇順で並べ替え
-        </button>
-      </div>
-      
+      </form>
     </div>
     <ul class="ui centered grid">
       <template v-for="(patient, index) in filteredUsers" :key="index">

@@ -1,35 +1,59 @@
 <template>
   <div class="ui main container">
-    
     <div class="ui three column grid">
-      <div class="column four wide left aligned vertical middle aligned">
-        <div class="ui green circular button" @click="goBack">
-          <i class="arrow left icon"></i>
-        </div>
-      </div>
-      <div class="column four wide left aligned vertical middle aligned">
-        <div class="ui huge label">
-            {{ username }}
+      
+      <div class="row">    
+        <div class="column one wide left aligned ">
+          <div class="ui inverted green circular button" @click="goBack">
+            <i class="arrow left icon"></i>
           </div>
+        </div>
+        
+        <div class="column four wide left aligned vertical middle aligned">
+          <div class="ui large header">
+              {{ username }}
+            </div>
+        </div>
+        
+        <div class="column eleven wide right aligned">
+          <div class="ui green pointing secondary compact menu">
+            <button class="ui button item" :class="{ active: mode === 1 }" @click="changeMode(1)">
+              日常
+            </button>
+            <button class="ui button item" :class="{ active: mode === 2 }" @click="changeMode(2)">
+              食事
+            </button>
+            <button class="ui button item" :class="{ active: mode === 3 }" @click="changeMode(3)">
+              運動
+            </button>
+            <button class="ui button item" :class="{ active: mode === 4 }" @click="changeMode(4)">
+              HbA1c
+            </button>
+          </div>
+        </div>
+        
       </div>
-      <div class="column eight wide right aligned vertical middle aligned">
-        <div class="ui green pointing secondary compact menu right floated">
-          <button class="ui button item" :class="{ active: mode === 1 }" @click="changeMode(1)">
-            日常
-          </button>
-          <button class="ui button item" :class="{ active: mode === 2 }" @click="changeMode(2)">
-            食事
-          </button>
-          <button class="ui button item" :class="{ active: mode === 3 }" @click="changeMode(3)">
-            運動
-          </button>
-          <button class="ui button item" :class="{ active: mode === 4 }" @click="changeMode(4)">
-            HbA1c
-          </button>
+      
+      <div class="row">
+        <div class="column sixteen wide right aligned ">
+          <div class="ui secondary compact menu">
+            <button class="ui inverted green button circular" @click="goToCurrentMonth" v-if="selectedMonth !== currentMonth">
+              今月
+            </button>
+            <button class="ui button item" @click="prevMonth">
+              <i class="chevron left icon"></i>
+            </button>
+            <div class="item">
+                {{ selectedMonth }}月 {{ selectedYear }}年
+            </div>
+            <button class="ui button item" @click="nextMonth">
+              <i class="chevron right icon"></i>
+            </button>
+          </div>
         </div>
       </div>
+      
     </div>
-    
 
 
     <div class="field padding-top" v-if="mode !== 4">
