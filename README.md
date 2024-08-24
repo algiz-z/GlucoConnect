@@ -10,9 +10,10 @@
 |原田　裕大|サポート|フロントエンド|
 
 ## DB設計
-以下はテーブル一覧。DB名はglucoconnect
+以下はテーブル一覧。
 
-### Patients（患者）テーブル
+### Patient（患者）テーブル
+TableName: GlucoConnectPatient
 
 | カラム名        | データ型           | 説明                                                                 |
 | --------------- | ------------------ | -------------------------------------------------------------------- |
@@ -21,7 +22,8 @@
 | `password`      | `STRING`           | ハッシュ化されたパスワード                                            |
 | `doctor_map`    | `MAP`              | 担当医師の情報を保持するマップ。`doctor_id`をキーとし、関連データを持つ |
 
-### Doctors（医師）テーブル
+### Doctor（医師）テーブル
+TableName: GlucoConnectDoctor
 
 | カラム名        | データ型           | 説明                                                                  |
 | --------------- | ------------------ | --------------------------------------------------------------------- |
@@ -31,21 +33,26 @@
 | `patient_map`   | `MAP`              | 担当患者の情報を保持するマップ。`patient_id`をキーとし、関連データを持つ |
 | `category`      | `STRING`           | 医師の専門分野（例: 内科、糖尿病専門医など）  ソートキー              |
 
-### Posts（投稿）テーブル
+### Articles（投稿）テーブル
+TableName: GlucoConnectArticles
 
 | カラム名            | データ型           | 説明                                                                |
 | ------------------- | ------------------ | ------------------------------------------------------------------- |
 | `user_id`           | `STRING`           | 投稿者（患者）のユーザーID (Partition Key)                           |
-| `created_at`        | `STRING`           | 投稿が作成された日時 (Sort Key)。タイムスタンプ形式が推奨されます      |
-| `post_type`         | `STRING`           | 投稿の種類（例: 診察記録、薬の相性記録、食事記録など）                |
+| `created_at`        | `NUMBER`           | 投稿が作成された日時 (Sort Key)。                                    |
+| `post_type`         | `STRING`           | 投稿の種類（診察・日常記録:`note`, 薬の相性記録:`medicine`, 食事記録:`meal`）|
 | `content`           | `STRING`           | 診察記録やメモなどの投稿内容                                         |
-| `medicine_score`    | `NUMBER`           | 薬の相性値（`post_type`が薬の相性記録の場合に使用）                  |
-| `mealpicture`  | `STRING`              | 食事記録画像のメタデータ。画像のURL（`post_type`が食事記録の場合に使用） |
+| `medicine_score`    | `NUMBER`           | 薬の相性値（`post_type`が薬の相性記録`medicine`の場合に使用）        |
+| `mealpicture`       | `STRING`           | 食事記録画像のURL（`post_type`が食事記録`meal`の場合に使用） |
 
 ### Hba1c_Records（HbA1c記録）テーブル
+TableName: GlucoConnectHba1c_Records
 
 | カラム名       | データ型         | 説明                                     |
 | -------------- | ---------------- | ---------------------------------------- |
 | `user_id`      | `STRING`         | 記録を持つ患者のユーザーID（Partition Key）|
-| `recorded_at`  | `STRING`         | HbA1cが測定された日時（Sort Key）         |
+| `recorded_at`  | `NUMBER`         | HbA1cが測定された日時（Sort Key）         |
 | `hba1c_value`  | `NUMBER`         | 測定されたHbA1cの値                      |
+
+- **GlucoConnectArticles**: `medicine_score`が`0`の投稿は`post_type`が`note`だった時と同じ扱い
+- **GlucoConnectArticles**, **GlucoConnectHba1c_Records**: unixtimeをNumber型にしたことで空白でエラーが発生する。ただし、直接参照可能。
