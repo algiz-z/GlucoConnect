@@ -4,7 +4,7 @@
       
       <div class="row">    
         <div class="column one wide left aligned ">
-          <div class="ui inverted green circular button" @click="goBack">
+          <div class="ui teal circular button" @click="goBack">
             <i class="arrow left icon"></i>
           </div>
         </div>
@@ -16,7 +16,7 @@
         </div>
         
         <div class="column eleven wide right aligned">
-          <div class="ui green pointing secondary compact menu">
+          <div class="ui teal pointing secondary compact menu">
             <button class="ui button item" :class="{ active: mode === 1 }" @click="changeMode(1)">
               日常
             </button>
@@ -37,7 +37,7 @@
       <div class="row">
         <div class="column sixteen wide right aligned ">
           <div class="ui secondary compact menu">
-            <button class="ui inverted green button circular" @click="goToCurrentMonth" v-if="selectedMonth !== currentMonth">
+            <button class="ui inverted teal button circular" @click="goToCurrentMonth" v-if="selectedMonth !== currentMonth">
               今月
             </button>
             <button class="ui button item" @click="prevMonth">
@@ -67,7 +67,7 @@
         <tbody>
           <tr v-for="(week, weekIndex) in calendar" :key="weekIndex">
             <td v-for="day in week" :key="day.date">
-                <div class="ui green circular">{{ day.date }}</div>
+                <div class="ui teal circular">{{ day.date }}</div>
                 <span>Today was a good day!</span>
             </td>
           </tr>
@@ -135,7 +135,7 @@ export default {
   
   methods: {
     goBack() {
-      this.$router.push({ name: 'Home-Doctor' });
+      this.$router.replace({ name: 'Patient-List' });
     },
     
     changeMode(newMode) {

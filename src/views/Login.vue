@@ -7,13 +7,16 @@
         <div class="ui text loader">Loading</div>
       </div>
       
-      <div v-if="message" class="ui negative message">
-        {{ message }}
+      <div v-if="errorMessage" class="ui negative message">
+        {{ errorMessage }}
+      </div>
+      <div v-if="positiveMessage" class="ui positive message">
+        {{ positiveMessage }}
       </div>
       
       <div class="ui segment">
         
-        <div class="ui green top attached tabular two item menu">
+        <div class="ui teal top attached tabular two item menu">
             <button class="ui button item" :class="{ active: isPatient }" @click="changeUserType()">
               患者
             </button>
@@ -59,7 +62,7 @@
             </div>
           </div>
           
-          <button class="ui fluid green huge button" type="submit" :disabled="!isFormValid">
+          <button class="ui fluid teal huge button" type="submit" :disabled="!isFormValid">
             {{ submitText }}
           </button>
           
@@ -98,7 +101,8 @@ export default {
         category: null,
         hba1c_value: null,
       },
-      message: null,
+      errorMessage: null,
+      positiveMessage: null,
     };
   },
 
@@ -133,6 +137,9 @@ export default {
     },
     
     async submit(){
+      this.errorMessage = null;
+      this.positiveMessage = null;
+      
       if (this.isLoading) {
         return;
       }
@@ -141,7 +148,8 @@ export default {
         //リクエストボディを指定する
         const requestBody = {
           user_id: this.user.user_id,
-          password: this.user.password
+          password: this.user.password,
+          account_type: this.isPatient ? 'patient' : 'doctor'
         };
   
         try {
@@ -165,11 +173,12 @@ export default {
           console.log(jsonData);
           window.localStorage.setItem('token', jsonData.token);
           window.localStorage.setItem('user_id', this.user.user_id);
-          window.localStorage.setItem('account_type', isPatient ? 'patient' : 'doctor');
-          this.$router.push({ name : 'Home' });
+          window.localStorage.setItem('account_type', this.isPatient ? 'patient' : 'doctor');
+          this.positiveMessage = jsonData.message;
+          this.$router.push({ name: this.isPatient ? 'Home-Patient' : 'Home-Doctor' });
           
         } catch (e) {
-          this.message = e.message;
+          this.errorMessage = e.message;
           // エラー時の処理
         } finally {
           this.isLoading = false;
@@ -218,13 +227,14 @@ export default {
 
         // 成功時の処理
         console.log(jsonData);
+        this.positiveMessage = jsonData.message;
         window.localStorage.setItem('token', jsonData.token);
         window.localStorage.setItem('user_id', this.user.user_id);
-        window.localStorage.setItem('account_type', isPatient ? 'patient' : 'doctor');
-        this.$router.push({ name : 'Home' });
+        window.localStorage.setItem('account_type', this.isPatient ? 'patient' : 'doctor');
+        this.$router.push({ name: this.isPatient ? 'Home-Patient' : 'Home-Doctor' });
           
       } catch (e) {
-        this.message = e.message;
+        this.errorMessage = e.message;
         // エラー時の処理
       } finally {
           this.isLoading = false;

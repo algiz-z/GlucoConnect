@@ -10,7 +10,7 @@
         <div class="ui grid">
           <div class="row">    
             <div class="one wide column center aligned vertical middle aligned">
-              <label>患者名：</label>
+              <label>氏名：</label>
             </div>
             <div class="fourteen wide column">
               <input v-model="username" type="text" name="username" placeholder="患者名" class="ui huge fluid input" />
@@ -38,7 +38,7 @@
           <div class="row">
             <div class="one wide column"></div>
             <div class="thirteen wide column">
-              <div class="ui green two item menu">
+              <div class="ui teal two item menu">
                 <button class="ui button item" :class="{ active: desc }" @click="toggleMode()">
                   HbA1c 降順で並べ替え
                 </button>
@@ -48,7 +48,7 @@
               </div>
             </div>
             <div class="two wide column">
-              <button type="button" class="ui inverted green circular button" @click="resetForm()">
+              <button type="button" class="ui teal circular button" @click="resetForm()">
                 リセット
               </button>
             </div>
@@ -71,7 +71,7 @@
                     <h3 class="ui name-text">{{ patient.username }}</h3>
                   </div>
                   <div class="column five wide right aligned vertical middle aligned">
-                    <div class="ui green label large">HbA1c: {{ patient.hba1c_value }}%</div>
+                    <div class="ui teal label large">HbA1c: {{ patient.hba1c_value }}%</div>
                   </div>
                 </div>
               </div>
@@ -108,7 +108,7 @@ export default {
         {
           user_id: 2,
           username: 'Mariana Okazaki',
-          profilePicture: 'path_to_image2.jpg',
+          profilePicture: '',
           hba1c_value: 7.1,
         },
       ],
@@ -184,7 +184,9 @@ export default {
   .custom-card-width {
     width: 35rem;
   }
-  
+  @media (max-width: 800) {
+    
+  }
   .name-text {
     color: black; 
   }

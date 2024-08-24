@@ -1,21 +1,15 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
+import DoctorList from '../views/Doctor-List.vue';
 import PatientList from '../views/Patient-List.vue';
-import HomePatient from '../views/Home-Patient.vue';
 import PatientDetail from '../views/Patient-Detail.vue';
+import HomePatient from '../views/Home-Patient.vue';
+import HomeDoctor from '../views/Home-Doctor.vue';
+import Profile from '../views/Profile.vue';
   
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
-    {
-      path: '/',
-      name: 'Home',
-      component: Home,
-      meta: {
-        title: 'Home'
-      }
-    },
     {
       path: '/login',
       name: 'Login',
@@ -44,6 +38,30 @@ const router = createRouter({
       path: '/home-patient',
       name: 'Home-Patient',
       component: HomePatient,
+      meta: {
+        title: 'Home'
+      }
+    },
+    {
+      path: '/profile',
+      name: 'Profile',
+      component: Profile,
+      meta: {
+        title: 'Profile'
+      }
+    },
+    {
+      path: '/doctor-list',
+      name: 'Doctor-List',
+      component: DoctorList,
+      meta: {
+        title: '医師一覧'
+      }
+    },
+    {
+      path: '/home-doctor',
+      name: 'Home-Doctor',
+      component: HomeDoctor,
       meta: {
         title: 'Home'
       }
