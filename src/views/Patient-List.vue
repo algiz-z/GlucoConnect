@@ -65,7 +65,7 @@
               <div class="content">
                 <div class="ui three column grid">
                   <div class="column three wide">
-                    <img :src="patient.profilePicture || 'https://semantic-ui.com/images/wireframe/square-image.png'" @error="onImageError" class="ui image-size image circular" alt="Profile Picture" />
+                    <img :src="'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png'" class="ui image-size image circular" alt="Profile Picture" />
                   </div>
                   <div class="column eight wide left aligned vertical middle aligned">
                     <h3 class="ui name-text">{{ patient.username }}</h3>
@@ -167,10 +167,6 @@ export default {
       });
     },
     
-    onImageError(event) {
-      event.target.src = 'https://semantic-ui.com/images/wireframe/square-image.png';
-    },
-    
     resetForm() {
       this.username = "";
       this.start = 0;
@@ -185,10 +181,6 @@ export default {
 </script>
 
 <style scoped>
-   .image-size {
-      width: 3.5rem;
-      height: 3.5rem; 
-   }
   .custom-card-width {
     width: 35rem;
   }

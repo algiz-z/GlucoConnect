@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
-import HomeDoctor from '../views/Home-Doctor.vue';
+import PatientList from '../views/Patient-List.vue';
 import HomePatient from '../views/Home-Patient.vue';
 import PatientDetail from '../views/Patient-Detail.vue';
   
@@ -25,11 +25,11 @@ const router = createRouter({
       }
     },
     {
-      path: '/home-doctor',
-      name: 'Home-Doctor',
-      component: HomeDoctor,
+      path: '/patient-list',
+      name: 'Patient-List',
+      component: PatientList,
       meta: {
-        title: 'Home'
+        title: '患者一覧'
       }
     },
     {
@@ -45,7 +45,7 @@ const router = createRouter({
       name: 'Home-Patient',
       component: HomePatient,
       meta: {
-        title: '患者側'
+        title: 'Home'
       }
     }
   ],
