@@ -6,7 +6,7 @@ import PatientDetail from '../views/Patient-Detail.vue';
 import HomePatient from '../views/Home-Patient.vue';
 import HomeDoctor from '../views/Home-Doctor.vue';
 import Profile from '../views/Profile.vue';
-  
+
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
@@ -67,12 +67,30 @@ const router = createRouter({
       }
     }
   ],
-})
+});
+
+// 追加: ログイン後のリダイレクト処理
+router.beforeEach((to, from, next) => {
+  const accountType = window.localStorage.getItem('account_type');
+
+  if (to.path === '/login' && accountType) {
+    // ログイン済みであれば適切なタイムラインへリダイレクト
+    if (accountType === 'patient') {
+      next({ name: 'Home-Patient' });
+    } else if (accountType === 'doctor') {
+      next({ name: 'Home-Doctor' });
+    } else {
+      next();
+    }
+  } else {
+    next(); // 通常のルートナビゲーションを許可
+  }
+});
 
 const DEFAULT_TITLE = 'TITLE';
 
 router.afterEach((to) => {
   document.title = to.meta.title ?? DEFAULT_TITLE
-})
+});
 
-export default router
+export default router;views
