@@ -43,7 +43,8 @@ TableName: GlucoConnectArticles
 | `post_type`         | `STRING`           | 投稿の種類（診察・日常記録:`note`, 薬の相性記録:`medicine`, 食事記録:`meal`）|
 | `content`           | `STRING`           | 診察記録やメモなどの投稿内容                                         |
 | `medicine_score`    | `NUMBER`           | 薬の相性値（`post_type`が薬の相性記録`medicine`の場合に使用）        |
-| `picture`       　　| `STRING`           |　主には食事記録画像のURL 　　　　　　　　　　　　　　　　　　　　　　|
+| `picture`       　　| `STRING`           | 主には食事記録画像のURL 　　　　　　　　　　　　　　　　　　　　　　|
+| `special`           | `STRING`           | 特記事項。薬の名前など                                              |
 
 ### Hba1c_Records（HbA1c記録）テーブル
 TableName: GlucoConnectHba1c_Records

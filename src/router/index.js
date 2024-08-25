@@ -15,57 +15,57 @@ const router = createRouter({
       name: 'Login',
       component: Login,
       meta: {
-        title: 'Login'
-      }
+        title: 'Login',
+      },
     },
     {
       path: '/patient-list',
       name: 'Patient-List',
       component: PatientList,
       meta: {
-        title: '患者一覧'
-      }
+        title: '患者一覧',
+      },
     },
     {
       path: '/patient-detail',
       name: 'Patient-Detail',
       component: PatientDetail,
       meta: {
-        title: '患者の記録'
-      }
+        title: '患者の記録',
+      },
     },
     {
       path: '/home-patient',
       name: 'Home-Patient',
       component: HomePatient,
       meta: {
-        title: 'Home'
-      }
+        title: 'Home',
+      },
     },
     {
       path: '/profile',
       name: 'Profile',
       component: Profile,
       meta: {
-        title: 'Profile'
-      }
+        title: 'Profile',
+      },
     },
     {
       path: '/doctor-list',
       name: 'Doctor-List',
       component: DoctorList,
       meta: {
-        title: '医師一覧'
-      }
+        title: '医師一覧',
+      },
     },
     {
       path: '/home-doctor',
       name: 'Home-Doctor',
       component: HomeDoctor,
       meta: {
-        title: 'Home'
-      }
-    }
+        title: 'Home',
+      },
+    },
   ],
 });
 
@@ -90,7 +90,7 @@ router.beforeEach((to, from, next) => {
 const DEFAULT_TITLE = 'TITLE';
 
 router.afterEach((to) => {
-  document.title = to.meta.title ?? DEFAULT_TITLE
+  document.title = to.meta.title ?? DEFAULT_TITLE;
 });
 
-export default router;views
+export default router;

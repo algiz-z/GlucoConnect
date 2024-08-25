@@ -1,135 +1,127 @@
 <template>
-  <form class="ui form">
-    <!-- 投稿タイプに応じてフォームの表示内容を切り替える -->
-    <div class="ui grid">
-      <!-- 写真アップロードボタン -->
-      <div class="row">
+  <div :class="['ui segment post-form', themeClass]">
+    <PostTypeMenu :postType="postType" @update:postType="updatePostType" />
+
+    <form class="ui form">
+      <div class="ui grid">
+        <div class="sixteen wide column">
+          <!-- PatientDailyRecord.vueやPatientMealRecord.vueのコンテンツがここに挿入されます -->
+          <slot></slot>
+        </div>
+
         <div class="sixteen wide column right aligned">
-          <ImageUploader @fileUploaded="handleFileUpload" />
+          <button class="ui small icon button" @click="triggerFileInput" type="button">
+            <i class="upload icon"></i>
+          </button>
+          <button
+            class="ui large button circular"
+            :style="activeButtonStyle"
+            type="button"
+            @click="submitPost"
+            :disabled="!isFormValid"
+          >
+            投稿
+          </button>&thinsp;
         </div>
-      </div>
 
-      <!-- テキストエリア（診察・日常記録） -->
-      <div class="row" v-if="postType === 1">
-        <div class="one wide column right aligned vertical top aligned">
-          <img :src="'https://www.w3schools.com/howto/img_avatar.png'" class="ui image circular" alt="Profile Picture" />
-        </div>
-        <div class="fifteen wide column">
-          <div class="field textarea-container">
-            <textarea rows="4" maxlength="400" placeholder="ここにメモを書いてください" v-model="content" />
-            <div class="char-count">{{ content.length }} / 400</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- テキストエリア（食事記録） -->
-      <div class="row" v-if="postType === 2">
-        <div class="one wide column right aligned vertical top aligned">
-          <img :src="'https://www.w3schools.com/howto/img_avatar.png'" class="ui image circular" alt="Profile Picture" />
-        </div>
-        <div class="fifteen wide column">
-          <div class="field textarea-container">
-            <textarea rows="4" maxlength="400" placeholder="食事の詳細やコメントを書いてください" v-model="content" />
-            <div class="char-count">{{ content.length }} / 400</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- テキストエリアとスコア（薬の相性記録） -->
-      <div class="row" v-if="postType === 3">
-        <div class="one wide column right aligned vertical top aligned">
-          <img :src="'https://www.w3schools.com/howto/img_avatar.png'" class="ui image circular" alt="Profile Picture" />
-        </div>
-        <div class="fifteen wide column">
-          <div class="field textarea-container">
-            <textarea rows="4" maxlength="400" placeholder="薬の効果やコメントを書いてください" v-model="content" />
-            <div class="char-count">{{ content.length }} / 400</div>
-          </div>
-          <div class="ui teal ten item menu">
-            <template v-for="n in 10" :key="n">
-              <button class="ui button item" :class="{ active: medicineScore === n }" @click="$emit('update:medicineScore', n)">
-                {{ n }}
-              </button>
-            </template>
-          </div>
-        </div>
-      </div>
-
-      <!-- 画像プレビュー -->
-      <div class="row" v-if="imageSrc">
-        <div class="sixteen wide column center aligned">
-          <div class="center aligned vertical middle aligned image-container">
-            <img :src="imageSrc" alt="Preview" class="ui image small" />
-            <button @click="removeImage" class="ui tiny icon lightgrey button circular remove-button">
+        <div class="sixteen wide column center aligned" v-if="imageSrc">
+          <div class="ui small image">
+            <img :src="imageSrc" alt="Preview" />
+            <button @click="removeImage" class="ui tiny icon button circular">
               <i class="close icon"></i>
             </button>
           </div>
         </div>
       </div>
-
-      <!-- 投稿ボタン -->
-      <div class="row">
-        <div class="sixteen wide column right aligned">
-          <button class="ui teal medium button circular" type="button" @click="submitPost">
-            投稿
-          </button>
-        </div>
-      </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </template>
 
 <script>
-import ImageUploader from '@/components/ImageUploader.vue';
+import PostTypeMenu from './patient/PostTypeMenu.vue';
 
 export default {
   name: 'PostForm',
   components: {
-    ImageUploader
+    PostTypeMenu,
   },
   props: {
     postType: Number,
     content: String,
     imageSrc: String,
-    medicineScore: Number
+    isFormValid: Boolean,
+  },
+  computed: {
+    themeClass() {
+      return {
+        1: 'daily-record-border',
+        2: 'meal-record-border',
+        3: 'medicine-border',
+      }[this.postType];
+    },
+    activeButtonStyle() {
+      return {
+        1: { backgroundColor: '#00b5ad', color: '#fff' },
+        2: { backgroundColor: '#f2711c', color: '#fff' },
+        3: { backgroundColor: '#21ba45', color: '#fff' },
+      }[this.postType];
+    },
   },
   methods: {
-    handleFileUpload(imageSrc) {
-      this.$emit('update:imageSrc', imageSrc);
+    updatePostType(type) {
+      this.$emit('update:postType', type);
+    },
+    triggerFileInput() {
+      // 写真アップロード処理
+      document.getElementById('fileUpload').click();
     },
     removeImage() {
       this.$emit('update:imageSrc', null);
     },
     submitPost() {
       this.$emit('submitPost');
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
-.textarea-container {
+/* 投稿部分のスタイル */
+.ui.segment.post-form {
+  padding: 2rem;
+  border-radius: 0.5rem;
+  background-color: #ffffff; /* 背景色を白に設定 */
+  border: 2px solid; /* 縁の色を動的に変更 */
+}
+
+/* 動的に変更される縁の色 */
+.daily-record-border {
+  border-color: #00b5ad;
+}
+
+.meal-record-border {
+  border-color: #f2711c;
+}
+
+.medicine-border {
+  border-color: #21ba45;
+}
+
+.ui.grid {
+  margin-top: 1rem;
+}
+
+.ui.small.image {
   position: relative;
 }
-.textarea-container textarea {
-  width: 100%;
-  resize: none;
+
+.ui.small.image img {
+  border-radius: 0.3rem;
 }
-.char-count {
+
+.ui.small.image button {
   position: absolute;
-  bottom: 0.8rem;
-  right: 0.8rem;
-  color: #888;
-  font-size: 0.8rem;
-}
-.remove-button {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  z-index: 10;
-}
-.image-container {
-  position: relative;
-  display: inline-block;
+  top: 0;
+  right: 0;
 }
 </style>
