@@ -2,7 +2,8 @@
   <div class="textarea-container">
     <textarea
       :value="value"
-      @input="$emit('input', $event.target.value)"
+      @input="handleInput"
+      @compositionend="handleCompositionEnd"
       rows="4"
       maxlength="400"
       placeholder="ここにメモを書いてください"
@@ -18,6 +19,16 @@ export default {
     value: {
       type: String,
       required: true
+    }
+  },
+  methods: {
+    handleInput(event) {
+      if (!event.isComposing) {
+        this.$emit('input', event.target.value);
+      }
+    },
+    handleCompositionEnd(event) {
+      this.$emit('input', event.target.value);
     }
   }
 };

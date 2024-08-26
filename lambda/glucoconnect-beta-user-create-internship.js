@@ -47,7 +47,7 @@ exports.handler = async (event) => {
     } else if (accountType === 'doctor') {
         const category = body.category || null;
         params = {
-            TableName: "GlucoConnectDoctor",
+            TableName: "GlucoConnectDoctors",
             Item: marshall({
                 user_id: userId,
                 username: username,

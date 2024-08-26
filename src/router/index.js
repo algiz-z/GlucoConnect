@@ -1,15 +1,18 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import Login from '../views/Login.vue';
 import DoctorList from '../views/Doctor-List.vue';
-import PatientList from '../views/Patient-List.vue';
-import PatientDetail from '../views/Patient-Detail.vue';
 import HomePatient from '../views/Home-Patient.vue';
 import HomeDoctor from '../views/Home-Doctor.vue';
 import Profile from '../views/Profile.vue';
+import PatientDetail from '@/views/PatientDetail.vue';
 
 const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(), // BASE_URLを削除
   routes: [
+    {
+      path: '/',
+      redirect: '/login' // デフォルトルートを追加
+    },
     {
       path: '/login',
       name: 'Login',
@@ -19,20 +22,10 @@ const router = createRouter({
       },
     },
     {
-      path: '/patient-list',
-      name: 'Patient-List',
-      component: PatientList,
-      meta: {
-        title: '患者一覧',
-      },
-    },
-    {
-      path: '/patient-detail',
-      name: 'Patient-Detail',
+      path: '/patient/:id',  // パスに :id を含める
+      name: 'PatientDetail',
       component: PatientDetail,
-      meta: {
-        title: '患者の記録',
-      },
+      meta:{title: "Patient Detail"},
     },
     {
       path: '/home-patient',
@@ -69,21 +62,19 @@ const router = createRouter({
   ],
 });
 
-// 追加: ログイン後のリダイレクト処理
+// ログイン状態のチェック
 router.beforeEach((to, from, next) => {
   const accountType = window.localStorage.getItem('account_type');
-
-  if (to.path === '/login' && accountType) {
-    // ログイン済みであれば適切なタイムラインへリダイレクト
+  if (!accountType && to.path !== '/login') {
+    next({ name: 'Login' });
+  } else if (to.path === '/login' && accountType) {
     if (accountType === 'patient') {
       next({ name: 'Home-Patient' });
     } else if (accountType === 'doctor') {
       next({ name: 'Home-Doctor' });
-    } else {
-      next();
     }
   } else {
-    next(); // 通常のルートナビゲーションを許可
+    next();
   }
 });
 

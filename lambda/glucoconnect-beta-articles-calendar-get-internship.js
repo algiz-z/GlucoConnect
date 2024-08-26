@@ -1,4 +1,4 @@
-const { DynamoDBClient,QueryCommand } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBClient, QueryCommand } = require("@aws-sdk/client-dynamodb");
 const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
 
 const client = new DynamoDBClient({ region: "ap-northeast-1" });
@@ -23,22 +23,31 @@ exports.handler = async (event) => {
   }
 
   // クエリパラメータから DynamoDB Query 用のパラメータを生成
-  const { userId } = event.queryStringParameters || {};
+  const { userId, year, month } = event.queryStringParameters || {};
 
-  // userIdが提供されていない場合はエラーを返す
-  if (!userId) {
+  // userId, year, monthが提供されていない場合はエラーを返す
+  if (!userId || !year || !month) {
     response.statusCode = 400;
     response.body = JSON.stringify({
-      message: "userIdが指定されていません。",
+      message: "userId, year, または monthが指定されていません。",
     });
     return response;
   }
 
+  // 指定された月の初日と最終日をタイムスタンプで計算
+  const startDate = new Date(year, month - 1, 1); // 月は0始まりのため、-1する
+  const endDate = new Date(year, month, 0); // 翌月の0日 = 指定月の最終日
+
+  const startTimestamp = startDate.getTime();
+  const endTimestamp = endDate.getTime() + 86399999; // 最終日の23:59:59
+
   const queryParam = {
     TableName,
-    KeyConditionExpression: "user_id = :uid",
+    KeyConditionExpression: "user_id = :uid AND created_at BETWEEN :start AND :end",
     ExpressionAttributeValues: marshall({
       ":uid": userId,
+      ":start": startTimestamp,
+      ":end": endTimestamp,
     }),
   };
 

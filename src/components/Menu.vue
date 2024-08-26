@@ -18,14 +18,8 @@
 export default {
   name: 'Menu',
   props: {
-    account_type: {
-      type: String,
-      required: true
-    },
-    postType: {
-      type: Number,
-      required: true
-    },
+    account_type: String,
+    postType: Number,
     userIcon: {
       type: String,
       default: 'https://www.w3schools.com/howto/img_avatar.png'

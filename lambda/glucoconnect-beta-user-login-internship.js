@@ -31,7 +31,7 @@ exports.handler = async (event) => {
     if (accountType === "patient") {
         tableName = "GlucoConnectPatient";
     } else if (accountType === "doctor") {
-        tableName = "GlucoConnectDoctor";
+        tableName = "GlucoConnectDoctors";  // 正しいテーブル名に修正
     } else {
         response.statusCode = 400;
         response.body = JSON.stringify({

@@ -7,17 +7,17 @@
         type="text"
         id="medicine-name"
         placeholder="薬の名前を入力"
-        :value="medicineName"
-        @input="updateMedicineName"
         class="ui input"
+        :value="medicineName"
+        @input="onMedicineNameInput"
       />
     </div>
 
     <!-- テキストエリア -->
-    <TextAreaWithCounter :value="content" @input="updateContent" />
+    <TextAreaWithCounter :value="content" @input="handleInput" />
 
     <!-- 薬のスコアを選択するメニュー -->
-    <div class="ui mini header">薬のスコアを選択してください:</div>
+    <div class="ui mini header">薬を服用してからの体調の評価（５が変化なし）</div>
     <div class="ui ten item menu">
       <template v-for="n in 10" :key="n">
         <button class="ui button item" :class="{ active: medicineScore === n }" @click="$emit('update:medicineScore', n)">
@@ -39,19 +39,21 @@ export default {
   props: {
     content: String,
     medicineScore: Number,
-    medicineName: String,  // 薬の名前を受け取るプロパティ
+    medicineName: String,
   },
   methods: {
-    updateContent(content) {
-      this.$emit('update:content', content);
+    onMedicineNameInput(event) {
+      const value = event.target.value;
+      this.$emit('update:medicineName', value);
     },
-    updateMedicineName(event) {
-      this.$emit('update:medicineName', event.target.value);
+    updateContent(value) {
+      console.log("event:",event);
+      if (value !== undefined) {
+        this.$emit('update:content', value);
+      } else {
+        console.error("Received undefined value in updateContent");
+      }
     }
   }
 };
 </script>
-
-<style scoped>
-/* 必要に応じて追加のスタイルをここに記述 */
-</style>

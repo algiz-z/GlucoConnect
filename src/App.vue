@@ -21,9 +21,7 @@ export default {
     const route = useRoute();
 
     const showMenu = computed(() => route.path !== '/login');
-
     const account_type = ref(localStorage.getItem('account_type'));
-
     const postType = ref(1);
 
     const updatePostType = () => {
@@ -49,6 +47,6 @@ export default {
 
 <style scoped>
 .main-content {
-  margin-top: 2rem; /* メニューとコンテンツ間の空白を追加 */
+  margin-top: 2rem; /* メニューとコンテンツの間にスペースを追加 */
 }
 </style>

@@ -1,34 +1,53 @@
 const { DynamoDBClient, ScanCommand } = require("@aws-sdk/client-dynamodb");
 const { unmarshall } = require("@aws-sdk/util-dynamodb");
-const client = new DynamoDBClient({ region: "ap-northeast-1" });
-const TableName = "User";
 
-exports.handler = async (event, context) => {
+const client = new DynamoDBClient({ region: "ap-northeast-1" });
+
+exports.handler = async (event) => {
   const response = {
     statusCode: 200,
     headers: {
       "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type,Authorization",
     },
     body: JSON.stringify({ message: "" }),
   };
 
-  //TODO: 取得対象のテーブル名をparamに宣言
-  const param = {};
-
-  const command = new ScanCommand(param);
+  // Authorization ヘッダのバリデーション
+  if (event.headers.authorization !== "mtitoken") {
+    response.statusCode = 401;
+    response.body = JSON.stringify({
+      message: "認証されていません。HeaderにTokenを指定してください",
+    });
+    return response;
+  }
 
   try {
-    // client.send()で全件取得するコマンドを実行
-    const users = (await client.send(command)).Items;
+    // DynamoDBのテーブルからすべての患者を取得する
+    const params = {
+      TableName: "GlucoConnectPatient",
+    };
 
-    //TODO: 全ユーザのpasswordを隠蔽する処理を記述
+    const command = new ScanCommand(params);
+    const result = await client.send(command);
 
-    //TODO: レスポンスボディを設定する
+    // DynamoDBから取得したアイテムをJSONオブジェクトに変換し、不要なフィールドを削除
+    const patients = result.Items.map((item) => {
+      const patient = unmarshall(item);
+
+      // 不要なフィールドを削除
+      delete patient.password;
+      delete patient.doctor_map;
+
+      return patient;
+    });
+
+    // レスポンスに患者データを設定
+    response.body = JSON.stringify({ patients });
   } catch (e) {
-    console.error(e);
     response.statusCode = 500;
     response.body = JSON.stringify({
-      message: "予期せぬエラーが発生しました。",
+      message: "患者リストの取得中にエラーが発生しました。",
       errorDetail: e.toString(),
     });
   }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TextAreaWithCounter :value="content" @input="updateContent" />
+    <TextAreaWithCounter :value="content" @input="handleInput" />
   </div>
 </template>
 
