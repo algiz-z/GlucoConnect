@@ -1,3 +1,4 @@
+# this was made in an intership via MTI
 # team2-app
 医者ー患者間でのSNSアプリケーション「GlucoConnect」のリポジトリです。
 
