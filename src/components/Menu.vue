@@ -1,9 +1,7 @@
 <template>
   <div :class="['ui top fixed inverted massive menu', postTypeClass]">
-    <router-link active-class="active" v-if="account_type === 'patient'" class="item" exact to="/home-patient"><i class="home icon"></i> Home</router-link>
-    <router-link active-class="active" v-if="account_type === 'doctor'" class="item" exact to="/home-doctor"><i class="home icon"></i> Home</router-link>
-    <router-link active-class="active" v-if="account_type === 'patient'" class="item" to="/doctor-list"><i class="user plus icon"></i> Following</router-link>
-    <router-link active-class="active" v-if="account_type === 'doctor'" class="item" exact to="/patient-list"><i class="users icon"></i> Followers</router-link>
+    <router-link active-class="active" class="item" :to="homeRoute"><i class="home icon"></i> Home</router-link>
+    <router-link active-class="active" class="item" :to="followRoute"><i class="users icon"></i> {{ followText }}</router-link>
     <router-link active-class="active" class="item" to="/profile"><i class="user icon"></i> Profile</router-link>
     <div class="right menu">
       <div class="item">
@@ -18,7 +16,6 @@
 export default {
   name: 'Menu',
   props: {
-    account_type: String,
     postType: Number,
     userIcon: {
       type: String,
@@ -26,6 +23,20 @@ export default {
     }
   },
   computed: {
+    accountType() {
+      return window.localStorage.getItem('account_type');
+    },
+    homeRoute() {
+      const route = this.accountType === 'doctor' ? '/home-doctor' : '/home-patient';
+      return route;
+    },
+    followRoute() {
+      const route = this.accountType === 'doctor' ? '/patient-list' : '/doctor-list';
+      return route;
+    },
+    followText() {
+      return this.accountType === 'doctor' ? 'Followers' : 'Following';
+    },
     postTypeClass() {
       switch (this.postType) {
         case 1:

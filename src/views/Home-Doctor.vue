@@ -1,10 +1,17 @@
 <template>
   <div class="ui container">
-    <div style="margin-top:100px;"></div>
+    <Filter
+      style="margin-top:6rem;"
+      :username="filter.username"
+      :start="filter.start"
+      :end="filter.end"
+      @filterChange="applyFilters"
+    />
+    <div style="margin-top:2rem;"></div>
     <div class="ui link cards centered">
       <div 
         class="card"
-        v-for="patient in patients" 
+        v-for="patient in filteredUsers" 
         :key="patient.user_id" 
         @click="selectPatient(patient.user_id)"
         style="cursor: pointer;"
@@ -29,12 +36,21 @@
 
 <script>
 import { baseUrl } from "@/assets/config.js";
+import Filter from '@/components/doctor/Filter.vue';
 
 export default {
   data() {
     return {
-      patients: [], // 患者データを格納
+      patients: [], // Dados dos pacientes
+      filter: {
+        username: '',
+        start: null,
+        end: null,
+      }
     };
+  },
+  components: {
+    Filter,
   },
   methods: {
     async fetchPatients() {
@@ -57,9 +73,28 @@ export default {
       // 患者の詳細ページに遷移
       this.$router.push({ name: 'PatientDetail', params: { id: userId } });
     },
+    applyFilters(filterData) {
+      this.filter = filterData;
+    }
   },
   mounted() {
     this.fetchPatients();
   },
+  computed: {
+  filteredUsers() {
+    return this.patients
+      .filter(e => {
+        const matchUsername = this.filter.username
+          ? e.username?.includes(this.filter.username)
+          : true;
+        const withinHb = (
+          (this.filter.start ? e.hba1c_value >= this.filter.start : true) &&
+          (this.filter.end ? e.hba1c_value <= this.filter.end : true)
+        );
+        return matchUsername && withinHb;
+      })
+    }
+  },
+
 };
 </script>

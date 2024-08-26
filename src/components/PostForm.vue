@@ -2,22 +2,25 @@
   <div :class="['ui segment post-form', themeClass]">
     <PostTypeMenu :postType="postType" @update:postType="updatePostType" />
 
-    <form class="ui form">
+    <form class="ui form" @submit.prevent="submitPost">
       <div class="ui grid">
         <div class="sixteen wide column">
           <!-- PatientDailyRecord.vueやPatientMealRecord.vueのコンテンツがここに挿入されます -->
-          <slot></slot>
+          <slot :content="formData" @input="updateContent"></slot>
         </div>
 
         <div class="sixteen wide column right aligned">
-          <button class="ui small icon button" @click="triggerFileInput" type="button">
+          <button
+            class="ui small icon button"
+            @click="triggerFileInput"
+            type="button"
+          >
             <i class="upload icon"></i>
           </button>
           <button
             class="ui large button circular"
             :style="activeButtonStyle"
-            type="button"
-            @click="submitPost"
+            type="submit"
             :disabled="!isFormValid"
           >
             投稿
@@ -51,6 +54,11 @@ export default {
     imageSrc: String,
     isFormValid: Boolean,
   },
+  data() {
+    return {
+      formData: this.content || '', // 初期値をcontentから取得
+    };
+  },
   computed: {
     themeClass() {
       return {
@@ -67,61 +75,28 @@ export default {
       }[this.postType];
     },
   },
+  watch: {
+    content(newContent) {
+      this.formData = newContent;
+    },
+  },
   methods: {
     updatePostType(type) {
       this.$emit('update:postType', type);
     },
     triggerFileInput() {
-      // 写真アップロード処理
       document.getElementById('fileUpload').click();
     },
     removeImage() {
       this.$emit('update:imageSrc', null);
     },
     submitPost() {
-      this.$emit('submitPost');
+      this.$emit('submitPost', this.formData);
+    },
+    updateContent(value) {
+      this.formData = value;
+      this.$emit('input', value); // 親に更新を通知
     },
   },
 };
 </script>
-
-<style scoped>
-/* 投稿部分のスタイル */
-.ui.segment.post-form {
-  padding: 2rem;
-  border-radius: 0.5rem;
-  background-color: #ffffff; /* 背景色を白に設定 */
-  border: 2px solid; /* 縁の色を動的に変更 */
-}
-
-/* 動的に変更される縁の色 */
-.daily-record-border {
-  border-color: #00b5ad;
-}
-
-.meal-record-border {
-  border-color: #f2711c;
-}
-
-.medicine-border {
-  border-color: #21ba45;
-}
-
-.ui.grid {
-  margin-top: 1rem;
-}
-
-.ui.small.image {
-  position: relative;
-}
-
-.ui.small.image img {
-  border-radius: 0.3rem;
-}
-
-.ui.small.image button {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-</style>

@@ -115,7 +115,9 @@ export default {
     updateMedicineName(name) {
       this.newArticle.medicine_name = name;
     },
-    async submitPost() {
+    async submitPost(content) {
+      console.log(content);
+      this.newArticle.content = content || '';  // テキストエリアの値を取得
       const authToken = localStorage.getItem('token');
       const userId = localStorage.getItem('user_id');
       
@@ -170,7 +172,7 @@ export default {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
   
-        console.log('Post successful');
+        console.log('Post successful', content);
         this.fetchArticles(); // タイムラインを更新
         this.resetForm(); // フォームをリセット (投稿成功後に実行)
       } catch (error) {

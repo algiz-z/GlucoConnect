@@ -21,7 +21,7 @@
           <div class="field">
             <div class="ui left icon input">
               <i class="id card icon"></i>
-              <input type="text" placeholder="User ID" v-model="user.user_id" />
+              <input type="text" placeholder="User ID" v-model="user.user_id" required disabled />
             </div>
           </div>
           
@@ -56,8 +56,28 @@
           <button class="ui fluid teal huge button" type="submit" :disabled="!isFormValid">
             更新
           </button>
-          
         </form>
+      </div>
+    </div>
+    <!-- Delete Account Section -->
+    <div class="ui grid">
+      <div class="ui centered row">
+        <a href="#" class="ui red basic button" @click.prevent="confirmDelete">
+          アカウント削除
+        </a>
+      </div>
+    </div>
+    
+    <!-- Confirm Delete Modal -->
+    <div class="ui modal" ref="deleteModal">
+      <i class="close icon"></i>
+      <div class="header">アカウント削除の確認</div>
+      <div class="content">
+        <p>アカウントを削除しますか？削除は元に戻せません。</p>
+      </div>
+      <div class="actions">
+        <div class="ui button" @click="closeDeleteModal">キャンセル</div>
+        <div class="ui negative button" @click="deleteAccount">削除</div>
       </div>
     </div>
   </div>
@@ -72,9 +92,10 @@ export default {
   data() {
     return {
       isPatient: window.localStorage.getItem('account_type') === 'patient',
+      account_type: window.localStorage.getItem('account_type'),
       isLoading: false,
       user: {
-        user_id: null,
+        user_id: window.localStorage.getItem('user_id'),
         password: null,
         username: null,
         category: null,
@@ -124,8 +145,43 @@ export default {
         // エラー時の処理
       }
     },
+    confirmDelete() {
+      $(this.$refs.deleteModal).modal('show');
+    },
+    closeDeleteModal() {
+      $(this.$refs.deleteModal).modal('hide');
+    },
+    async deleteAccount() {
+      this.isLoading = true;
+      try {
+        const response = await fetch(`${baseUrl}/user?user_id=${this.user.user_id}&account_type=${this.account_type}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'mtitoken'
+          },
+          body: JSON.stringify({ user_id: this.user.user_id })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        // 成功の時の処理
+        this.positiveMessage = 'アカウントが削除されました。';
+        this.$router.push({ name : 'Login' });
+
+      } catch (error) {
+        this.errorMessage = `エラーが発生しました: ${error.message}`;
+      } finally {
+        this.isLoading = false;
+        this.closeDeleteModal();
+      }
+    },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+  
+</style>

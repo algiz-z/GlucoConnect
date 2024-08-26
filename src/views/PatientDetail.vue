@@ -3,7 +3,7 @@
     <div class="ui three column grid">
       
       <!-- Header Section -->
-      <div class="row">    
+      <div class="row" style="margin-top: 1rem;">    
         <div class="column one wide left aligned ">
           <div class="ui teal circular button" @click="goBack">
             <i class="arrow left icon"></i>
@@ -27,15 +27,18 @@
             <button class="ui button item" :class="{ active: mode === 3 }" @click="changeMode(3)">
               薬の相性
             </button>
+            <button class="ui button item" :class="{ active: mode === 4 }" @click="changeMode(4)">
+              HbA1c
+            </button>
           </div>
         </div>
       </div>
       
       <!-- Month Navigation -->
-      <div class="row">
+      <div class="row" v-if="mode !== 4" >
         <div class="column sixteen wide right aligned ">
           <div class="ui secondary compact menu">
-            <button class="ui inverted teal button circular" @click="goToCurrentMonth" v-if="selectedMonth !== currentMonth">
+            <button class="ui teal button circular" @click="goToCurrentMonth" v-if="selectedMonth !== currentMonth|| selectedYear !== currentYear">
               今月
             </button>
             <button class="ui button item" @click="prevMonth">
@@ -57,23 +60,35 @@
       :posts="filteredPosts" 
       :calendar="calendar" 
       :daysOfWeek="daysOfWeek"
-      @postClicked="handlePostClick"
+      @postClicked="openPostModal"
+      v-if="mode !== 4" 
     />
-
-    <!-- Graph Section (for mode 4) -->
-    <div class="field" v-if="mode === 4">
-      グラフ表示
+    <LineChart :chart-data="data" :options="options" style="margin-top:2rem;" v-if="mode === 4" />
+    <!-- Post Details Modal -->
+    <div class="ui modal" ref="postModal">
+      <i class="close icon"></i>
+      <div class="header">{{ modalDate }} の投稿詳細</div>
+      <div class="content">
+        <PostList :posts="modalPosts" />
+      </div>
+      <div class="actions">
+        <div class="ui approve button">OK</div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import CalendarView from '@/components/CalendarView.vue';
+import PostList from '@/components/PostList.vue';
 import { baseUrl } from "@/assets/config.js";
+import LineChart from '@/components/doctor/LineChart.vue'; 
 
 export default {
   components: {
     CalendarView,
+    PostList,
+    LineChart,
   },
   data() {
     return {
@@ -85,6 +100,45 @@ export default {
       daysOfWeek: ["日", "月", "火", "水", "木", "金", "土"],
       calendar: [],
       currentMonth: new Date().getMonth() + 1,
+      currentYear: new Date().getFullYear(),
+      modalPosts: [],
+      modalDate: null,
+      data: {
+        labels: ['2023年8月20日', '2023年9月18日', '2023年10月20日', '2023年11月25日', '2023年12月20日', '2024年1月23日', '2024年2月20日', '2024年3月15日', '2024年4月27日', '2024年8月22日'],
+        datasets: [
+          {
+            label: 'HbA1c',
+            backgroundColor: 'rgba(0, 128, 128, 0.2)',
+            borderColor: 'rgba(0, 128, 128, 1)',
+            pointBackgroundColor: 'rgba(0, 128, 128, 1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(0, 128, 128, 1)',
+            data: [5.6, 6.1, 5.8, 6.3, 5.9, 6.0, 6.2, 6.4, 5.7, 6.0]
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            min: 0,
+            max: 10,
+            title: {
+              display: true,
+              text: 'HbA1c (%)'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: '日付' // "Data" em japonês
+            },
+
+          }
+        }
+      },
     };
   },
   computed: {
@@ -111,6 +165,7 @@ export default {
         }
         const articlesData = await articlesResponse.json();
         this.patientPosts = articlesData.articles || [];
+        console.log(this.patientPosts);
 
         if (this.patientPosts.length > 0) {
           this.patient = { username: this.patientPosts[0].user_id };
@@ -122,11 +177,33 @@ export default {
       }
     },
     generateCalendar() {
-      // ダミーデータでサンプル生成
-      this.calendar = [
-        [{ date: 1 }, { date: 2 }, { date: 3 }, { date: 4 }, { date: 5 }, { date: 6 }, { date: 7 }],
-        [{ date: 8 }, { date: 9 }, { date: 10 }, { date: 11 }, { date: 12 }, { date: 13 }, { date: 14 }],
-      ];
+      const daysInMonth = new Date(this.selectedYear, this.selectedMonth, 0).getDate();
+      const firstDayOfMonth = new Date(this.selectedYear, this.selectedMonth - 1, 1).getDay();
+
+      let calendar = [];
+      let week = [];
+
+      for (let i = 0; i < firstDayOfMonth; i++) {
+        week.push({ date: null });
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        week.push({ date: day });
+
+        if (week.length === 7) {
+          calendar.push(week);
+          week = [];
+        }
+      }
+
+      if (week.length > 0) {
+        while (week.length < 7) {
+          week.push({ date: null });
+        }
+        calendar.push(week);
+      }
+
+      this.calendar = calendar;
     },
     changeMode(mode) {
       this.mode = mode;
@@ -136,6 +213,7 @@ export default {
     },
     goToCurrentMonth() {
       this.selectedMonth = this.currentMonth;
+      this.selectedYear = this.currentYear;
     },
     prevMonth() {
       if (this.selectedMonth > 1) {
@@ -155,9 +233,13 @@ export default {
       }
       this.generateCalendar();
     },
-    handlePostClick(post) {
-      console.log("Post clicked:", post);
-      // 追加のアクションがあればここに実装
+    openPostModal(date) {
+      this.modalDate = date;
+      this.modalPosts = this.filteredPosts.filter(post => {
+        const postDate = new Date(post.created_at).getDate();
+        return postDate === date;
+      });
+      $(this.$refs.postModal).modal('show');
     }
   },
   mounted() {
